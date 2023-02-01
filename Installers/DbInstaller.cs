@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Tweetbook.Data;
+using Tweetbook.Services;
 
 namespace Tweetbook.Installers;
 public class DbInstaller : IInstaller
@@ -9,6 +10,8 @@ public class DbInstaller : IInstaller
     {
         services.AddDbContext<DataContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddScoped<IPostService, PostService>();
 
         //builder.Services.AddDefaultIdentity<IdentityUser>()
         //    .AddEntityFrameworkStores<DataContext>();

@@ -8,8 +8,6 @@ public class MvcInstaller : IInstaller
     {
         services.AddControllersWithViews();
 
-        services.AddSingleton<IPostService, PostService>();
-
         services.AddSwaggerGen(x =>
         {
             x.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
@@ -18,5 +16,6 @@ public class MvcInstaller : IInstaller
                 Version = "v1"
             });
         });
+
     }
 }
