@@ -36,6 +36,10 @@ app.UseSwaggerUI(option =>
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseAuthentication();
+
+app.UseAuthorization();
+
 app.UseRouting();
 
 app.MapControllerRoute(
