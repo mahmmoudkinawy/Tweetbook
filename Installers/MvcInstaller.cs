@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using Tweetbook.Options;
+using Tweetbook.Services;
 
 namespace Tweetbook.Installers;
 public class MvcInstaller : IInstaller
@@ -14,6 +15,8 @@ public class MvcInstaller : IInstaller
 
         var jwtSettings = new JwtSettings();
         configuration.Bind(nameof(jwtSettings), jwtSettings);
+
+        services.AddScoped<IIdentityService, IdentityService>();
 
         services.AddSingleton(jwtSettings);
 

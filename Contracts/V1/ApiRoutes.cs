@@ -13,4 +13,10 @@ public static class ApiRoutes
         public const string Delete = Base + "/posts/{postId}";
         public const string Create = $"{Base}/posts";
     }
+
+    public static class Identity
+    {
+        public const string Login = $"{Base}/identity/login";
+        public const string Register = $"{Base}/identity/register";
+    }
 }
