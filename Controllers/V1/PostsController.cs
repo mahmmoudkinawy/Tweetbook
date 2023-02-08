@@ -5,6 +5,7 @@ using Tweetbook.Contracts.V1;
 using Tweetbook.Contracts.V1.Requests;
 using Tweetbook.Contracts.V1.Responses;
 using Tweetbook.Domain;
+using Tweetbook.Extenstions;
 using Tweetbook.Services;
 
 namespace Tweetbook.Controllers.V1;
@@ -44,7 +45,8 @@ public class PostsController : Controller
     {
         var post = new Post
         {
-            Name = postRequest.Name
+            Name = postRequest.Name,
+            UserId = HttpContext.GetUserId()
         };
 
         await _postService.CreatePostAsync(post);
@@ -64,11 +66,19 @@ public class PostsController : Controller
         [FromRoute] Guid postId,
         [FromBody] UpdatePostRequest request)
     {
-        var post = new Post
+        var userOwenPost = await _postService
+            .UserOwenPostAsync(postId, HttpContext.GetUserId());
+
+        if (!userOwenPost)
         {
-            Id = postId,
-            Name = request.Name,
-        };
+            return BadRequest(new
+            {
+                error = "You do not owen this post"
+            });
+        }
+
+        var post = await _postService.GetPostByIdAsync(postId);
+        post.Name = request.Name;
 
         var updated = await _postService.UpdatePostAsync(post);
 
@@ -83,6 +93,17 @@ public class PostsController : Controller
     [HttpDelete(ApiRoutes.Posts.Delete)]
     public async Task<IActionResult> Delete([FromRoute] Guid postId)
     {
+        var userOwenPost = await _postService
+            .UserOwenPostAsync(postId, HttpContext.GetUserId());
+
+        if (!userOwenPost)
+        {
+            return BadRequest(new
+            {
+                error = "You do not owen this post"
+            });
+        }
+
         var deleted = await _postService.DeletePostAsync(postId);
 
         if (deleted)

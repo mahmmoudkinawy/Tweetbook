@@ -36,6 +36,15 @@ public class PostService : IPostService
         return updated > 0;
     }
 
+    public async Task<bool> UserOwenPostAsync(Guid postId, string userId)
+    {
+        return await _dataContext.Posts.AnyAsync(
+            a =>
+                a.Id == postId &&
+                a.UserId == userId
+               );
+    }
+
     public async Task<bool> DeletePostAsync(Guid id)
     {
         var post = await GetPostByIdAsync(id);

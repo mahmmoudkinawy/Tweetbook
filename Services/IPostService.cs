@@ -8,4 +8,5 @@ public interface IPostService
     Task<bool> UpdatePostAsync(Post postToUpdate);
     Task<bool> DeletePostAsync(Guid id);
     Task<bool> CreatePostAsync(Post post);
+    Task<bool> UserOwenPostAsync(Guid postId, string userId);
 }

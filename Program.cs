@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using Tweetbook.Data;
 using Tweetbook.Installers;
 using Tweetbook.Options;
 
@@ -46,4 +48,16 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.Run();
+using var scope = app.Services.CreateScope();
+var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+try
+{
+    await dbContext.Database.MigrateAsync();
+}
+catch (Exception ex)
+{
+    logger.LogError(ex, "An error occured while applying migrations");
+}
+
+await app.RunAsync();

@@ -76,7 +76,7 @@ public class IdentityService : IIdentityService
         return CreateAuthenticationUserResult(user);
     }
 
-    private AuthenticationResult CreateAuthenticationUserResult(IdentityUser newUser)
+    private AuthenticationResult CreateAuthenticationUserResult(IdentityUser user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
@@ -85,10 +85,10 @@ public class IdentityService : IIdentityService
         {
             Subject = new ClaimsIdentity(new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, newUser.Email),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, newUser.Email),
-                new Claim("id", newUser.Id)
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim("id", user.Id)
             }),
             Expires = DateTime.UtcNow.AddHours(2),
             SigningCredentials = new SigningCredentials(
