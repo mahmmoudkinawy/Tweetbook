@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
 using System.Text;
+using Tweetbook.Authorization;
 using Tweetbook.Options;
 using Tweetbook.Services;
 
@@ -46,7 +48,15 @@ public class MvcInstaller : IInstaller
                 x.TokenValidationParameters = tokenValidationParameters;
             });
 
-        services.AddAuthorization();
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("MustWorkForKinawy", policy =>
+            {
+                policy.AddRequirements(new WorksForCompanyRequirement("kinawy.com"));
+            });
+        });
+
+        services.AddSingleton<IAuthorizationHandler, WorksForCompanyHandler>();
 
         services.AddSwaggerGen(x =>
         {
