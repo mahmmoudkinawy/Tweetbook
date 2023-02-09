@@ -46,7 +46,12 @@ public class PostsController : Controller
         var post = new Post
         {
             Name = postRequest.Name,
-            UserId = HttpContext.GetUserId()
+            UserId = HttpContext.GetUserId(),
+            Tags = postRequest.Tags.Select(a => new Tag
+            {
+                Id = Guid.NewGuid(),
+                Name = a
+            }).ToList()
         };
 
         await _postService.CreatePostAsync(post);

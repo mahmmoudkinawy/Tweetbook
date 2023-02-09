@@ -12,4 +12,8 @@ public class Post
     public string UserId { get; set; }
     [ForeignKey(nameof(UserId))]
     public IdentityUser User { get; set; }
+
+    
+    public Guid TagId { get; set; }
+    public ICollection<Tag> Tags { get; set; }
 }

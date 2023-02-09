@@ -19,7 +19,8 @@ public class PostService : IPostService
 
     public async Task<List<Post>> GetPostsAsync()
     {
-        return await _dataContext.Posts.ToListAsync();
+        return await _dataContext.Posts
+            .ToListAsync();
     }
 
     public async Task<bool> CreatePostAsync(Post post)
@@ -43,6 +44,11 @@ public class PostService : IPostService
                 a.Id == postId &&
                 a.UserId == userId
                );
+    }
+
+    public async Task<IEnumerable<Tag>> GetAllTagsAsync()
+    {
+        return await _dataContext.Tags.ToListAsync();
     }
 
     public async Task<bool> DeletePostAsync(Guid id)

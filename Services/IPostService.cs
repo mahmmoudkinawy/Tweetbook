@@ -9,4 +9,5 @@ public interface IPostService
     Task<bool> DeletePostAsync(Guid id);
     Task<bool> CreatePostAsync(Post post);
     Task<bool> UserOwenPostAsync(Guid postId, string userId);
+    Task<IEnumerable<Tag>> GetAllTagsAsync();
 }
