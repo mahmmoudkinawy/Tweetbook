@@ -1,0 +1,32 @@
+version: '3.5'
+
+networks:
+  localdev:
+    name: localdev
+
+services:
+  tweetbook:
+    image: ${DOCKER_REGISTRY-}tweetbook
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+        - 7000:80 
+    depends_on:
+        - db-server
+    networks:
+        - localdev
+
+
+  db-server:
+    image: postgres:latest
+    container_name: db-server
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=employee
+    ports:
+      - "5432:5432"
+    networks:
+      - localdev

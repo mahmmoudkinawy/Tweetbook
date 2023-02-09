@@ -10,7 +10,7 @@ public class DbInstaller : IInstaller
         IConfiguration configuration)
     {
         services.AddDbContext<DataContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddIdentity<IdentityUser, IdentityRole>()
             .AddEntityFrameworkStores<DataContext>();

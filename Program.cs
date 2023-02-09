@@ -60,4 +60,5 @@ catch (Exception ex)
     logger.LogError(ex, "An error occured while applying migrations");
 }
 
-await app.RunAsync();
+app.Run();
+public partial class Program { }
