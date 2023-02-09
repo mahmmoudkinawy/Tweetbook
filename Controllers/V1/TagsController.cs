@@ -17,7 +17,7 @@ public class TagsController : ControllerBase
     }
 
     [HttpGet(ApiRoutes.Tags.GetAll)]
-    [Authorize(Policy = "TagViewer")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetAll()
     {
         return Ok(await _postService.GetAllTagsAsync());

@@ -13,6 +13,7 @@ public class DbInstaller : IInstaller
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddIdentity<IdentityUser, IdentityRole>()
+            .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<DataContext>();
 
         services.AddScoped<IPostService, PostService>();

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tweetbook.Data;
 using Tweetbook.Installers;
@@ -51,9 +52,29 @@ app.MapControllerRoute(
 using var scope = app.Services.CreateScope();
 var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
 var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 try
 {
     await dbContext.Database.MigrateAsync();
+
+    if (!await roleManager.RoleExistsAsync("Admin"))
+    {
+        var adminRole = new IdentityRole
+        {
+            Name = "Admin"
+        };
+        await roleManager.CreateAsync(adminRole);
+    }
+
+    if (!await roleManager.RoleExistsAsync("Poster"))
+    {
+        var adminRole = new IdentityRole
+        {
+            Name = "Poster"
+        };
+        await roleManager.CreateAsync(adminRole);
+    }
+
 }
 catch (Exception ex)
 {
