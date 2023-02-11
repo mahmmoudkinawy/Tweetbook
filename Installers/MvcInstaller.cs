@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
 using System.Text;
 using Tweetbook.Authorization;
+using Tweetbook.Filters;
 using Tweetbook.Options;
 using Tweetbook.Services;
 
@@ -14,7 +16,12 @@ public class MvcInstaller : IInstaller
     public void InstallServices(IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddControllersWithViews();
+        services.AddControllersWithViews(options =>
+        {
+            options.Filters.Add<ValidationFilter>();
+        })
+            .AddFluentValidation(mvcConfiguration =>
+                mvcConfiguration.RegisterValidatorsFromAssemblyContaining<Program>());
 
         var jwtSettings = new JwtSettings();
         configuration.Bind(nameof(jwtSettings), jwtSettings);

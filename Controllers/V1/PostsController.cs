@@ -48,6 +48,11 @@ public class PostsController : Controller
     public async Task<IActionResult> Create(
         [FromBody] CreatePostRequest postRequest)
     {
+        if (!ModelState.IsValid)
+        {
+            
+        }
+
         var post = new Post
         {
             Name = postRequest.Name,

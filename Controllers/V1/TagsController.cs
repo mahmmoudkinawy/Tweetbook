@@ -21,7 +21,7 @@ public class TagsController : ControllerBase
     }
 
     [HttpGet(ApiRoutes.Tags.GetAll)]
-    [Authorize(Policy = "MustWorkForKinawy")]
+    //[Authorize(Policy = "MustWorkForKinawy")]
     public async Task<IActionResult> GetAll()
     {
         var tags = await _postService.GetAllTagsAsync();
