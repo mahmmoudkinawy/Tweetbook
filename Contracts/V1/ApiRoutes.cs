@@ -24,5 +24,6 @@ public static class ApiRoutes
     public static class Tags
     {
         public const string GetAll = $"{Base}/tags";
+        public const string Create = $"{Base}/tags";
     }
 }

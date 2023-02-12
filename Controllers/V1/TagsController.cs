@@ -20,6 +20,10 @@ public class TagsController : ControllerBase
         _mapper = mapper;
     }
 
+    /// <summary>
+    /// Returns all the tags in the system
+    /// </summary>
+    /// <response code="200">Returns all the tags in the system</response>
     [HttpGet(ApiRoutes.Tags.GetAll)]
     //[Authorize(Policy = "MustWorkForKinawy")]
     public async Task<IActionResult> GetAll()
@@ -28,4 +32,23 @@ public class TagsController : ControllerBase
 
         return Ok(_mapper.Map<IEnumerable<TagResponse>>(tags));
     }
+
+    ///// <summary>
+    ///// Creates the tags in the system
+    ///// </summary>
+    ///// <remarks>
+    /////     Sample request:
+    /////     
+    /////         POST /api/v1/tags
+    /////          {
+    /////            "name":"Some tag" 
+    /////          }
+    ///// </remarks>
+    ///// <response code="200">Creates the tags in the system<summary>   
+    ///// <response code="400">Unable to create the tag due to validation errores</response>
+    //[HttpPost(ApiRoutes.Tags.Create)]
+    //public async Task<IActionResult> CreateTag()
+    //{
+    //    return Created("", new { });
+    //}
 }

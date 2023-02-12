@@ -8,11 +8,13 @@ using Tweetbook.Contracts.V1.Responses;
 using Tweetbook.Domain;
 using Tweetbook.Extenstions;
 using Tweetbook.Services;
+using Tweetbook.SwaggerExamples.Responses;
 using static Tweetbook.Contracts.V1.ApiRoutes;
 
 namespace Tweetbook.Controllers.V1;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Produces("application/json")]
 public class PostsController : Controller
 {
     private readonly IPostService _postService;
@@ -31,7 +33,14 @@ public class PostsController : Controller
         return Ok(_mapper.Map<IEnumerable<PostResponse>>(posts));
     }
 
+    /// <summary>
+    /// Returns a post if if exists
+    /// </summary>
+    /// <param name="postId">Guid Id</param>
+    /// <returns></returns>
     [HttpGet(ApiRoutes.Posts.Get)]
+    [ProducesResponseType(typeof(PostResponseExample), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get([FromRoute] Guid postId)
     {
         var post = await _postService.GetPostByIdAsync(postId);
@@ -48,11 +57,6 @@ public class PostsController : Controller
     public async Task<IActionResult> Create(
         [FromBody] CreatePostRequest postRequest)
     {
-        if (!ModelState.IsValid)
-        {
-            
-        }
-
         var post = new Post
         {
             Name = postRequest.Name,
