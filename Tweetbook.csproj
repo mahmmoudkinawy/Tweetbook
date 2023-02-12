@@ -32,4 +32,8 @@
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.26.1" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Tweetbook.Contracts\Tweetbook.Contracts.csproj" />
+	</ItemGroup>
+
 </Project>
