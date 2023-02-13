@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Tweetbook.Contracts.V1.Requests.Queries;
 using Tweetbook.Data;
 using Tweetbook.Domain;
 
@@ -17,17 +19,23 @@ public class PostService : IPostService
         return await _dataContext.Posts.FindAsync(id);
     }
 
-    public async Task<List<Post>> GetPostsAsync(PaginationFilter paginationFilter = null)
+    public async Task<List<Post>> GetPostsAsync(
+        GetAllPostsFilter query = null,
+        PaginationFilter paginationFilter = null)
     {
-        if (paginationFilter == null)
+        var queryable = _dataContext.Posts.AsQueryable();
+
+        if (query == null)
         {
-            return await _dataContext.Posts
+            return await queryable
                 .ToListAsync();
         }
 
+        queryable = AddFiltersQuery(query, queryable);
+
         var skip = (paginationFilter.PageNumber - 1) * paginationFilter.PageSize;
 
-        return await _dataContext.Posts
+        return await queryable
             .Skip(skip)
             .Take(paginationFilter.PageSize)
             .ToListAsync();
@@ -74,6 +82,16 @@ public class PostService : IPostService
 
         var deleted = await _dataContext.SaveChangesAsync();
         return deleted > 0;
+    }
+
+    private static IQueryable<Post> AddFiltersQuery(GetAllPostsFilter query, IQueryable<Post> queryable)
+    {
+        if (!string.IsNullOrEmpty(query.UserId))
+        {
+            queryable = queryable.Where(a => a.UserId == query.UserId);
+        }
+
+        return queryable;
     }
 
 }
