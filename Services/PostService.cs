@@ -17,9 +17,19 @@ public class PostService : IPostService
         return await _dataContext.Posts.FindAsync(id);
     }
 
-    public async Task<List<Post>> GetPostsAsync()
+    public async Task<List<Post>> GetPostsAsync(PaginationFilter paginationFilter = null)
     {
+        if (paginationFilter == null)
+        {
+            return await _dataContext.Posts
+                .ToListAsync();
+        }
+
+        var skip = (paginationFilter.PageNumber - 1) * paginationFilter.PageSize;
+
         return await _dataContext.Posts
+            .Skip(skip)
+            .Take(paginationFilter.PageSize)
             .ToListAsync();
     }
 

@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Tweetbook.Cache;
 using Tweetbook.Contracts.V1;
 using Tweetbook.Contracts.V1.Requests;
+using Tweetbook.Contracts.V1.Requests.Queries;
 using Tweetbook.Contracts.V1.Responses;
 using Tweetbook.Domain;
 using Tweetbook.Extenstions;
+using Tweetbook.Helpers;
 using Tweetbook.Services;
 using Tweetbook.SwaggerExamples.Responses;
 
@@ -19,19 +21,35 @@ public class PostsController : Controller
 {
     private readonly IPostService _postService;
     private readonly IMapper _mapper;
+    private readonly IUriService _uriService;
 
-    public PostsController(IPostService postService, IMapper mapper)
+    public PostsController(IPostService postService, IMapper mapper, IUriService uriService)
     {
         _postService = postService;
         _mapper = mapper;
+        _uriService = uriService;
     }
 
     [HttpGet(ApiRoutes.Posts.GetAll)]
     [Cached(60)]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] PaginationQuery paginationQuery)
     {
-        var posts = await _postService.GetPostsAsync();
-        return Ok(_mapper.Map<IEnumerable<PostResponse>>(posts));
+        var pagination = _mapper.Map<PaginationFilter>(paginationQuery);
+
+        var posts = await _postService.GetPostsAsync(pagination);
+
+        var postsResponse = _mapper.Map<List<PostResponse>>(posts);
+
+        if (pagination == null || pagination.PageNumber < 1 ||
+                pagination.PageSize < 1)
+        {
+            return Ok(new PagedResponse<PostResponse>(postsResponse));
+        }
+
+        var paginationResponse = PaginationHelpers.CreatePaginatedResponse(
+            _uriService, pagination, postsResponse);
+
+        return Ok(paginationResponse);
     }
 
     /// <summary>
@@ -52,7 +70,7 @@ public class PostsController : Controller
             return NotFound();
         }
 
-        return Ok(_mapper.Map<PostResponse>(post));
+        return Ok(new Response<PostResponse>(_mapper.Map<PostResponse>(post)));
     }
 
     [HttpPost(ApiRoutes.Posts.Create)]
@@ -72,12 +90,14 @@ public class PostsController : Controller
 
         await _postService.CreatePostAsync(post);
 
-        var baseUrl =
-            $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
+        //var baseUrl =
+        //    $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
 
-        var locationUri = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{postId}", post.Id.ToString());
+        //var locationUri = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{postId}", post.Id.ToString());
 
-        return Created(locationUri, _mapper.Map<PostResponse>(post));
+        var locationUri = _uriService.GetPostUri(post.Id.ToString());
+
+        return Created(locationUri, new Response<PostResponse>(_mapper.Map<PostResponse>(post)));
     }
 
     [HttpPut(ApiRoutes.Posts.Update)]
@@ -103,7 +123,7 @@ public class PostsController : Controller
 
         if (updated)
         {
-            return Ok(_mapper.Map<PostResponse>(post));
+            return Ok(new Response<PostResponse>(_mapper.Map<PostResponse>(post)));
         }
 
         return NotFound();
